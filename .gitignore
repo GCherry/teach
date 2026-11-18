@@ -1,0 +1,21 @@
+# Build & local preview output
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Agent worktrees and scratch audit trails
+.worktrees/
+decisions.tsv
+.audit/
+
+# Local junctions/symlinks to chill-hq shared skills (never commit copies)
+.agents/skills
+.claude/skills
+.cursor/skills
+
+# Environment & editor
+.env

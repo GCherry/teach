@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teach · Reference 0001: Six-Plane AI Software Factory Blueprint</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    (function () {
+      var m = new URLSearchParams(window.location.search).get("mode") || localStorage.getItem("teach_theme") || "dark";
+      document.documentElement.setAttribute("data-theme", m === "light" ? "light" : "dark");
+    })();
+  </script>
+</head>
+<body class="no-handback" data-lesson-id="ai-software-factory/reference-0001">
+  <nav class="site-nav">
+    <div class="site-nav-inner">
+      <a class="site-brand" href="../lessons/0001-the-agnostic-control-plane.html">
+        <span class="brand-mark">T</span>
+        <span class="brand-text">
+          <strong>Teach</strong>
+          <span class="brand-sub">AI Software Factory · <span data-mode-badge>Dark Mode</span></span>
+        </span>
+      </a>
+      <div class="site-links">
+        <a class="nav-link" href="../lessons/0001-the-agnostic-control-plane.html">Lesson 0001</a>
+        <a class="nav-link active" href="./0001-six-plane-factory-blueprint.html">Reference 0001</a>
+        <a class="nav-link" href="../MISSION.md">Mission</a>
+        <a class="nav-link" href="../RESOURCES.md">Resources</a>
+        <button class="btn" type="button" data-theme-toggle>Light Mode</button>
+        <button class="btn btn-primary no-print" type="button" onclick="window.print()">Print Sheet</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wide prose-wide">
+    <p class="kicker">Reference 0001 · Print-Ready Architecture Sheet</p>
+    <h1>The Six-Plane AI Software Factory Blueprint</h1>
+    <p class="lead">
+      Compressed architecture reference mapping <code>chill-hq</code>'s workflow control plane to an agnostic
+      AI Gateway, dual-path observability pipeline, and leadership governance model.
+      Pair with <a href="../lessons/0001-the-agnostic-control-plane.html">Lesson 0001: The Agnostic Control Plane</a>.
+    </p>
+
+    <h2>1. The Six Planes (<code>chill-hq</code> vs. Enterprise Pitch)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Plane</th>
+            <th>Core Responsibility</th>
+            <th><code>chill-hq</code> Today</th>
+            <th><code>chill-hq</code> Upgrade Gap</th>
+            <th>Enterprise Pitch Equivalent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Intake &amp; Context</strong></td>
+            <td>Turn raw issues/specs into agent-ready contracts &amp; vocabulary.</td>
+            <td><code>AGENTS.md</code>, <code>GLOSSARY.md</code>, <code>docs/adr/</code>, <code>Planner</code> + <code>real-work</code> plans, repo onboarding guide.</td>
+            <td>Automate readiness scorecards &amp; inject attribution tags (<code>issue</code>, <code>risk_tier</code>) at dispatch.</td>
+            <td>Ticket triage gate (<code>ready-for-agent</code>), standardized repo steering files.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Execution &amp; Sandbox</strong></td>
+            <td>Run interactive IDEs/CLIs or isolated background agents safely.</td>
+            <td>Interactive harnesses (Antigravity now, Claude Code planned), git worktrees, <code>Narrowing Gate</code> cap.</td>
+            <td>Headless container/worktree runner template with max-retry circuit breaker &amp; credit cap per run.</td>
+            <td>Ephemeral cloud devboxes ("cattle, not pets", e.g., Stripe Minions EC2 devboxes).</td>
+          </tr>
+          <tr>
+            <td><strong>3. Toolshed (MCP &amp; Data)</strong></td>
+            <td>Provide least-privilege tools, docs, and code search to agents.</td>
+            <td>GitHub MCP, CLI tools (<code>gh</code>), shared <code>.agents/skills/</code> single source of truth.</td>
+            <td>Read-only tool allowlists per Role + secret scrubbing before telemetry emission.</td>
+            <td>Central governed MCP Gateway (read-only DB/logs, prompt-injection filters).</td>
+          </tr>
+          <tr>
+            <td><strong>4. AI Gateway &amp; FinOps</strong></td>
+            <td>Virtual keys, model routing (cloud + local), budgets, prompt caching.</td>
+            <td><em>Missing.</em> Harnesses connect directly using user subscriptions or local config.</td>
+            <td><strong>Issue target:</strong> Role-based model routing table + local LiteLLM/OpenAI-compat gateway profile.</td>
+            <td>SSO-bound Virtual Keys, rolling USD credit caps, graceful tier fallback, prompt-cache enforcement.</td>
+          </tr>
+          <tr>
+            <td><strong>5. Verification &amp; Release</strong></td>
+            <td>Prevent bad code from shipping via independent checks &amp; Merge Bar.</td>
+            <td><code>bin/validate.py</code>, independent <code>Reviewer</code> (Standards + Spec), <code>Acceptance Check</code>, 4-part <code>Merge Bar</code>.</td>
+            <td>Include model/role cost summary &amp; verification pass rates inside PR/Retro artifacts.</td>
+            <td>Deterministic CI + AI-as-judge PR gate + human final merge accountability.</td>
+          </tr>
+          <tr>
+            <td><strong>6. Observability &amp; Intelligence</strong></td>
+            <td>Join token/credit spend with PR throughput &amp; quality metrics.</td>
+            <td>Raw local logs (<code>transcript.jsonl</code>) &amp; <code>Retro</code> reviews, but no unified metrics store.</td>
+            <td><strong>Issue target:</strong> Emit canonical <code>factory_event/v1</code> spans from Gateway + Collector hooks; join with <code>gh</code> PR data.</td>
+            <td>Executive dashboard: DAU, Spend, Cost/Merged PR, Cycle Time, 14-day Churn &amp; Revert Rate.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>2. Dual-Path Agnostic Ingestion Pattern</h2>
+    <div class="grid-2">
+      <div class="card">
+        <span class="card-tag">Path 1 · Gateway Proxy</span>
+        <h3>Metered Cloud APIs &amp; Local Models</h3>
+        <p>
+          Covers CI agents, automated PR reviewers, custom scripts, and local inference servers (<strong>Ollama / vLLM</strong>)
+          plus pay-as-you-go Anthropic, OpenAI, or Vertex keys.
+        </p>
+        <ul>
+          <li><strong>Control Point:</strong> OpenAI/Anthropic-compatible proxy (e.g., LiteLLM Proxy).</li>
+          <li><strong>Limits:</strong> Virtual Key per user/agent role with rolling <code>max_budget</code> (USD credits) + TPM/RPM caps.</li>
+          <li><strong>Attribution:</strong> Custom HTTP headers (<code>x-factory-role</code>, <code>x-factory-repo</code>, <code>x-factory-branch</code>).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="card-tag amber">Path 2 · Harness Collector</span>
+        <h3>Flat-Rate Subscription Harnesses</h3>
+        <p>
+          Covers <strong>Google Antigravity</strong> and <strong>Claude Code Pro/Max</strong> seats authenticated via OAuth,
+          which cannot be blindly rerouted through a metered third-party API proxy.
+        </p>
+        <ul>
+          <li><strong>Control Point:</strong> Harness-native limits (seat quotas) + local OTel/transcript collector hook.</li>
+          <li><strong>Claude Code:</strong> Enable <code>CLAUDE_CODE_ENABLE_TELEMETRY=1</code> + OTLP exporter.</li>
+          <li><strong>Antigravity / Others:</strong> Post-session / <code>Retro</code> parser reading <code>transcript.jsonl</code> + git context.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>3. Canonical Telemetry Envelope (<code>factory_event/v1</code>)</h2>
+    <p>
+      Both Path 1 (Gateway) and Path 2 (Harness Collector) normalize into one schema aligned with
+      <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">OpenTelemetry GenAI Semantic Conventions</a>
+      so downstream dashboards never care which coding tool or model ran.
+    </p>
+    <pre><code>{
+  "schema_version": "factory_event/v1",
+  "event_id": "evt_01J...",
+  "timestamp_utc": "2026-11-18T14:22:09Z",
+  "session_id": "034d39c4-13d8-46d7-bbdd-8c5942f3c9aa",
+  "user_id": "gcherry",
+  "harness": "antigravity | claude-code | ci-runner | custom",
+  "billing_mode": "subscription | api_metered | local_free",
+  "gen_ai_system": "anthropic | google | openai | ollama",
+  "gen_ai_request_model": "claude-sonnet-4-5 | gemini-2.5-pro | qwen2.5-coder:32b",
+  "factory_role": "coordinator | planner | engineering | reviewer | docs | release | retro",
+  "repo": "GCherry/chill-hq",
+  "branch": "feature/telemetry-hook",
+  "issue_number": 14,
+  "pr_number": 19,
+  "usage": {
+    "input_tokens": 42000,
+    "cached_input_tokens": 31500,
+    "output_tokens": 1850,
+    "estimated_cost_usd": 0.048
+  }
+}</code></pre>
+
+    <h2>4. Three-Tier Leadership Metrics Cheat Sheet</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Core Metrics</th>
+            <th>Formula / Signal</th>
+            <th>What It Catches</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Input &amp; Adoption</strong></td>
+            <td>DAU/WAU by harness, Cache Hit Ratio, Credit Utilization</td>
+            <td><code>cached_tokens / total_input_tokens</code></td>
+            <td>Shelfware licenses vs. real usage; misconfigured prompt caching burning budget.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Factory Throughput</strong></td>
+            <td>Merged PRs/Engineer/Week, Agent-Authored PR Share, Cycle Time</td>
+            <td><code>merged_prs(ai_attributed) / active_devs</code></td>
+            <td>Raw delivery velocity and which tasks (bugs vs. features) succeed in the factory.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Quality Guardrails</strong></td>
+            <td>Cost per Merged PR, Review Rounds, Revert Rate, 14-Day Churn</td>
+            <td><code>sum(estimated_cost_usd) / count(merged_prs)</code></td>
+            <td>The "AI Productivity Paradox": high PR volume masking review gridlock or broken merges.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="page-footer">
+      Back to <a href="../lessons/0001-the-agnostic-control-plane.html">Lesson 0001</a> ·
+      Workspace: <a href="../MISSION.md">MISSION.md</a> ·
+      Sources: <a href="../RESOURCES.md">RESOURCES.md</a>
+    </footer>
+  </main>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

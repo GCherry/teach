@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teach · Lesson 0001: The Agnostic Control Plane</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    (function () {
+      var m = new URLSearchParams(window.location.search).get("mode") || localStorage.getItem("teach_theme") || "dark";
+      document.documentElement.setAttribute("data-theme", m === "light" ? "light" : "dark");
+    })();
+  </script>
+</head>
+<body data-lesson-id="ai-software-factory/0001-the-agnostic-control-plane">
+  <nav class="site-nav">
+    <div class="site-nav-inner">
+      <a class="site-brand" href="./0001-the-agnostic-control-plane.html">
+        <span class="brand-mark">T</span>
+        <span class="brand-text">
+          <strong>Teach</strong>
+          <span class="brand-sub">AI Software Factory · <span data-mode-badge>Dark Mode</span></span>
+        </span>
+      </a>
+      <div class="site-links">
+        <a class="nav-link active" href="./0001-the-agnostic-control-plane.html">Lesson 0001</a>
+        <a class="nav-link" href="../reference/0001-six-plane-factory-blueprint.html">Reference 0001</a>
+        <a class="nav-link" href="../MISSION.md">Mission</a>
+        <a class="nav-link" href="../RESOURCES.md">Resources</a>
+        <button class="btn" type="button" data-theme-toggle>Light Mode</button>
+        <button class="btn" type="button" data-drawer-toggle>Open Reference Drawer</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="atelier-shell">
+    <aside class="rail" aria-label="Mission and ZPD Compass">
+      <div class="rail-section">
+        <div class="rail-heading">Active Mission</div>
+        <p><strong>AI Software Factory</strong></p>
+        <p>Upgrade <code>chill-hq</code> with AI gateway + PR observability and pitch enterprise governance.</p>
+      </div>
+      <div class="rail-section">
+        <div class="rail-heading">ZPD Baseline (LR-0001)</div>
+        <p>Coordinator v2 workflow brain already built. Focus now: <strong>Gateway &amp; Telemetry planes</strong>.</p>
+      </div>
+      <div class="rail-section">
+        <div class="rail-heading">Course Sequence</div>
+        <ul class="lesson-list">
+          <li><a class="lesson-item current" href="./0001-the-agnostic-control-plane.html"><span>0001 · Control Plane</span><span class="pill">Active</span></a></li>
+          <li><span class="lesson-item"><span>0002 · Token-to-PR</span><span class="pill">Next</span></span></li>
+          <li><span class="lesson-item"><span>0003 · chill-hq Pitch</span><span class="pill">Locked</span></span></li>
+        </ul>
+      </div>
+      <div class="rail-section">
+        <div class="rail-heading">Storage Strength</div>
+        <p id="railScore">Quiz: 0 / 3 · Router: 0 / 4</p>
+        <p style="font-size: 0.77rem; margin-top: 0.4rem;">Saved in browser <code>localStorage</code> for your next <code>/teach</code> session.</p>
+      </div>
+    </aside>
+
+    <main>
+      <div class="prose">
+        <p class="kicker">Lesson 0001 · Zone of Proximal Development: Gateway &amp; Telemetry Foundations</p>
+        <h1>The Agnostic Control Plane: Subscriptions, APIs, and Local Models</h1>
+        <p class="lead">
+          You already built the workflow brain of a software factory in <code>chill-hq</code> (Coordinator v2,
+          six specialist Roles, Risk Tiers, and Merge Bar). Now we build the platform plane underneath it:
+          one vendor-agnostic control plane that governs cost and captures unified usage across
+          <strong>Google Antigravity</strong>, <strong>Claude Code subscriptions</strong>, <strong>metered APIs</strong>,
+          and <strong>local models</strong>.
+        </p>
+
+        <div class="callout">
+          <div class="callout-title">Mission Tie-In</div>
+          <p>
+            In <a href="../MISSION.md">MISSION.md</a>, your goal is two-fold: (1) upgrade <code>chill-hq</code> with
+            observability + gateway routing, and (2) pitch an enterprise governance model to leadership.
+            This lesson gives you the foundational architecture pattern that solves both without locking you into one IDE or model vendor.
+          </p>
+        </div>
+
+        <h2>1. The Trap Most Teams Fall Into</h2>
+        <p>
+          When engineering leaders ask <em>"How do we track token usage and put credit limits per user?"</em>,
+          the knee-jerk answer is: <strong>"Put every coding tool behind a single API proxy like LiteLLM."</strong>
+        </p>
+        <p>
+          That works cleanly for pay-as-you-go APIs and local Ollama servers—and then immediately collides with reality:
+        </p>
+        <ul>
+          <li><strong>Flat-rate subscription harnesses don't bill through your API key.</strong> Harnesses like <strong>Google Antigravity</strong> or a <strong>Claude Code Pro/Max</strong> seat authenticate via vendor OAuth against flat-rate or seat-pooled entitlements. Forcing them through a pay-per-token API proxy breaks subscription billing or fails auth altogether.</li>
+          <li><strong>Conversely, relying only on vendor subscription portals breaks factory automation.</strong> Headless CI reviewers, Slack-triggered "Minion" workers (<a href="https://stripe.dev/blog">Stripe Engineering</a>), and local Ollama models cannot run on an individual engineer's OAuth session—and vendor dashboards won't let you tag requests with your internal <code>issue_number</code> or <code>Coordinator Role</code>.</li>
+        </ul>
+
+        <div class="callout warn">
+          <div class="callout-title">Architectural Principle</div>
+          <p>
+            Never confuse <strong>the billing rail</strong> with <strong>the observability schema</strong>.
+            A true agnostic Software Factory separates <em>how tokens are transported &amp; billed</em> (two paths)
+            from <em>how usage is attributed &amp; measured</em> (one canonical schema).
+          </p>
+        </div>
+
+        <h2>2. The Solution: Dual-Path Control Plane</h2>
+        <p>
+          Instead of forcing every tool through one bottleneck, route workloads through <strong>two complementary ingestion paths</strong>
+          that emit the exact same canonical <a href="../reference/0001-six-plane-factory-blueprint.html"><code>factory_event/v1</code></a> record
+          (modeled on <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">OpenTelemetry GenAI Semantic Conventions</a>).
+        </p>
+      </div>
+
+      <div class="diagram-box prose-wide">
+        <svg viewBox="0 0 920 330" width="100%" height="auto" role="img" aria-label="Dual-Path Agnostic Control Plane Diagram" xmlns="http://www.w3.org/2000/svg" style="font-family: system-ui, -apple-system, sans-serif;">
+          <rect x="10" y="12" width="900" height="145" rx="10" fill="var(--svg-lane-1)" stroke="var(--svg-lane-1-stroke)" />
+          <text x="26" y="34" font-size="12" font-weight="700" fill="var(--accent-ink)">PATH 1 · AI GATEWAY PROXY (Metered APIs, CI Agents, Local Ollama/vLLM)</text>
+
+          <rect x="10" y="172" width="900" height="145" rx="10" fill="var(--svg-lane-2)" stroke="var(--svg-lane-2-stroke)" />
+          <text x="26" y="194" font-size="12" font-weight="700" fill="var(--amber)">PATH 2 · HARNESS COLLECTOR HOOKS (Flat-Rate Subscriptions: Antigravity, Claude Code Seats)</text>
+
+          <rect x="28" y="52" width="195" height="84" rx="8" fill="var(--svg-card)" stroke="var(--accent)" />
+          <text x="42" y="76" font-size="13" font-weight="700" fill="var(--ink)">Metered &amp; Local Clients</text>
+          <text x="42" y="96" font-size="11.5" fill="var(--ink-muted)">CI Reviewers · Headless Agents</text>
+          <text x="42" y="114" font-size="11.5" fill="var(--ink-muted)">CLI w/ Virtual Key · Local Scripts</text>
+
+          <path d="M 223 94 L 265 94" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow-gold)" />
+
+          <rect x="268" y="48" width="235" height="92" rx="8" fill="#d4af37" />
+          <text x="284" y="72" font-size="13" font-weight="700" fill="#0f1115">AI Gateway (e.g., LiteLLM)</text>
+          <text x="284" y="92" font-size="11.5" fill="#1f232b">• SSO Virtual Keys + max_budget</text>
+          <text x="284" y="109" font-size="11.5" fill="#1f232b">• Role-Tier Router (Frontier ↔ Local)</text>
+          <text x="284" y="126" font-size="11.5" fill="#1f232b">• Reads x-factory-role/repo/issue</text>
+
+          <path d="M 503 78 L 548 78" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow-gold)" />
+          <rect x="550" y="48" width="165" height="44" rx="8" fill="var(--svg-card)" stroke="var(--accent)" />
+          <text x="562" y="68" font-size="12" font-weight="700" fill="var(--ink)">Cloud &amp; Local LLMs</text>
+          <text x="562" y="84" font-size="11" fill="var(--ink-muted)">Anthropic · Vertex · Ollama</text>
+
+          <path d="M 503 116 L 548 116" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrow-gold)" />
+
+          <rect x="28" y="212" width="195" height="84" rx="8" fill="var(--svg-card)" stroke="var(--amber)" />
+          <text x="42" y="236" font-size="13" font-weight="700" fill="var(--ink)">Subscription Harnesses</text>
+          <text x="42" y="256" font-size="11.5" fill="var(--ink-muted)">Google Antigravity (OAuth)</text>
+          <text x="42" y="274" font-size="11.5" fill="var(--ink-muted)">Claude Code Pro/Max (OAuth)</text>
+
+          <path d="M 223 254 L 265 254" stroke="var(--amber)" stroke-width="2" marker-end="url(#arrow-amber)" />
+
+          <rect x="268" y="208" width="235" height="92" rx="8" fill="var(--svg-card)" stroke="var(--amber)" />
+          <text x="282" y="232" font-size="13" font-weight="700" fill="var(--amber)">Collector &amp; Retro Hooks</text>
+          <text x="282" y="252" font-size="11.5" fill="var(--ink-muted)">• OTLP Receiver (Claude Code)</text>
+          <text x="282" y="269" font-size="11.5" fill="var(--ink-muted)">• Transcript Parser (Antigravity)</text>
+          <text x="282" y="286" font-size="11.5" fill="var(--ink-muted)">• Enriches w/ git branch + PR #</text>
+
+          <path d="M 503 254 L 548 254" stroke="var(--amber)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrow-amber)" />
+
+          <rect x="550" y="106" width="340" height="190" rx="10" fill="var(--svg-store)" stroke="var(--accent)" />
+          <text x="568" y="134" font-size="13.5" font-weight="700" fill="#f3f4f6">Unified Telemetry &amp; Attribution Store</text>
+          <text x="568" y="156" font-size="11.5" fill="#ecd078">Canonical Schema: factory_event/v1</text>
+          <text x="568" y="180" font-size="11.5" fill="#9ca3af">1. Usage: tokens, cache hits, est_cost_usd</text>
+          <text x="568" y="198" font-size="11.5" fill="#9ca3af">2. Context: harness, billing_mode, role</text>
+          <text x="568" y="216" font-size="11.5" fill="#9ca3af">3. GitHub Join: repo, branch, issue #, PR #</text>
+          <line x1="568" y1="234" x2="870" y2="234" stroke="#2c3240" />
+          <text x="568" y="256" font-size="12" font-weight="700" fill="#ecd078">Outputs for Leadership &amp; chill-hq:</text>
+          <text x="568" y="276" font-size="11.5" fill="#f3f4f6">PR Throughput · Cost/Merged PR · Budget Alerts</text>
+
+          <defs>
+            <marker id="arrow-gold" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 z" fill="#d4af37" />
+            </marker>
+            <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 z" fill="#e5a93c" />
+            </marker>
+          </defs>
+        </svg>
+        <div class="diagram-caption">
+          Figure 1: Both billing worlds converge at the canonical <code>factory_event/v1</code> schema rather than forcing subscriptions through a metered proxy.
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>Path 1: The AI Gateway Proxy (Metered APIs + Local Models)</h3>
+        <p>
+          An AI Gateway such as <a href="https://docs.litellm.ai/docs/proxy/virtual_keys">LiteLLM Proxy</a> exposes one unified
+          OpenAI/Anthropic-compatible endpoint in front of commercial providers and local runtimes (Ollama, vLLM, LM Studio).
+          Three capabilities make it essential for your leadership pitch and for <code>chill-hq</code>:
+        </p>
+        <ol>
+          <li>
+            <strong>Virtual Keys + Rolling USD Credit Caps:</strong> Instead of handing developers raw Anthropic or OpenAI keys,
+            every engineer and headless CI agent gets a Virtual Key mapped to <code>user_id</code> and <code>team_id</code> with a
+            <code>max_budget</code> (e.g., $20/day or $250/month) plus TPM/RPM loop guards. Credits normalize across models—1M local tokens
+            cost $0, 1M Haiku/Flash tokens cost cents, and 1M frontier reasoning tokens debit accordingly.
+          </li>
+          <li>
+            <strong>Role-Tiered Model Routing:</strong> Your <code>chill-hq</code> Coordinator already splits work into
+            <code>Planner</code>, <code>Engineering</code>, <code>Reviewer</code>, <code>Docs</code>, <code>Release</code>, and <code>Retro</code>.
+            Through a gateway, you can map <em>logical model aliases</em> like <code>factory-architect</code> (frontier) vs.
+            <code>factory-utility</code> (local Qwen/Llama or Flash) without hardcoding model IDs into skills.
+          </li>
+          <li>
+            <strong>Custom Attribution Headers:</strong> Harnesses and scripts pass headers like <code>x-factory-role</code>,
+            <code>x-factory-repo</code>, and <code>x-factory-branch</code> so the gateway logs exactly which repo and Coordinator role spent each token.
+          </li>
+        </ol>
+
+        <h3>Path 2: Harness Collector Hooks (Antigravity &amp; Claude Code Subscriptions)</h3>
+        <p>
+          When you use <strong>Google Antigravity</strong> today—or add a <strong>Claude Code subscription</strong> next—you still need
+          visibility into tokens, tool calls, session duration, and PR outcomes without double-paying API rates.
+        </p>
+        <ul>
+          <li>
+            <strong>Claude Code:</strong> Supports native <a href="https://claude-code.mintlify.site">OpenTelemetry export</a>
+            via <code>CLAUDE_CODE_ENABLE_TELEMETRY=1</code>, streaming metrics (<code>claude_code.token.usage</code>,
+            <code>claude_code.cost.usage</code>, active time) straight to your local or enterprise OTLP collector.
+          </li>
+          <li>
+            <strong>Google Antigravity &amp; Local Logs:</strong> Writes structured session artifacts (such as <code>transcript.jsonl</code>)
+            locally. A lightweight collector script triggered at PR handoff or by <code>chill-hq</code>'s <code>Retro</code> role
+            can extract token/tool summaries, attach current <code>git</code> repo/branch/PR metadata, and emit the same <code>factory_event/v1</code> record with <code>billing_mode: "subscription"</code>.
+          </li>
+        </ul>
+
+        <h2>3. Practice 1: Route Real Factory Workloads</h2>
+        <p>
+          Lock in the Dual-Path mental model before moving on. For each workload below, choose the correct
+          <strong>Control Path</strong>, <strong>Budget Enforcement</strong>, and <strong>PR Attribution Signal</strong>.
+        </p>
+      </div>
+
+      <section class="interactive-panel prose-wide" data-router-exercise>
+        <div class="interactive-header">
+          <h3>Architecture Scenario Selector</h3>
+          <div>
+            <span class="badge-score" data-router-score>Routed: 0 / 4</span>
+            <button class="btn btn-primary" type="button" data-router-check>Check Architecture</button>
+            <button class="btn" type="button" data-router-reset>Reset</button>
+          </div>
+        </div>
+
+        <div class="scenario-row" data-scenario data-ok-note="OAuth subscriptions bypass metered keys; capture telemetry via transcript/Retro collector and join via git metadata.">
+          <div class="scenario-title">Scenario A: Engineer using Google Antigravity locally on a <code>chill-hq</code> feature branch</div>
+          <div class="scenario-desc">Developer is signed in with their personal/enterprise Google Antigravity account working interactively.</div>
+          <div class="scenario-controls">
+            <label>Control Path
+              <select data-expected="path2" data-hint="Antigravity uses OAuth, so use Path 2 (Harness Collector).">
+                <option value="">-- Choose Path --</option>
+                <option value="path1">Path 1: Gateway Proxy</option>
+                <option value="path2">Path 2: Harness Collector Hook</option>
+              </select>
+            </label>
+            <label>Budget Mechanism
+              <select data-expected="seat" data-hint="Subscriptions enforce vendor seat quotas, not Gateway virtual keys.">
+                <option value="">-- Choose Budget --</option>
+                <option value="virtual_key">Gateway Virtual Key max_budget</option>
+                <option value="seat">Vendor Seat Quota + Shadow Cost Estimate</option>
+                <option value="hardware">Local GPU Compute Cap</option>
+              </select>
+            </label>
+            <label>Attribution Source
+              <select data-expected="git_transcript" data-hint="Transcript logs + git branch/PR trailer tie the session to the PR.">
+                <option value="">-- Choose Signal --</option>
+                <option value="http_header">Gateway x-factory-* HTTP Headers</option>
+                <option value="git_transcript">Transcript Parser + Git Branch / PR Trailer</option>
+              </select>
+            </label>
+          </div>
+          <div class="scenario-feedback"></div>
+        </div>
+
+        <div class="scenario-row" data-scenario data-ok-note="Claude Code seats export standardized OTel metrics natively when CLAUDE_CODE_ENABLE_TELEMETRY=1 is set.">
+          <div class="scenario-title">Scenario B: Engineer running Claude Code (Pro/Max subscription) across multiple repos</div>
+          <div class="scenario-desc">Developer uses Claude Code interactively via OAuth subscription and opens PRs via <code>gh</code>.</div>
+          <div class="scenario-controls">
+            <label>Control Path
+              <select data-expected="path2" data-hint="Flat-rate Claude Code seats run on Path 2 (Collector).">
+                <option value="">-- Choose Path --</option>
+                <option value="path1">Path 1: Gateway Proxy</option>
+                <option value="path2">Path 2: Harness Collector Hook</option>
+              </select>
+            </label>
+            <label>Budget Mechanism
+              <select data-expected="seat" data-hint="Pro/Max billing is seat-bound rather than per-request USD.">
+                <option value="">-- Choose Budget --</option>
+                <option value="virtual_key">Gateway Virtual Key max_budget</option>
+                <option value="seat">Vendor Seat Quota + Shadow Cost Estimate</option>
+                <option value="hardware">Local GPU Compute Cap</option>
+              </select>
+            </label>
+            <label>Attribution Source
+              <select data-expected="otel_git" data-hint="Claude Code emits native OTel spans/metrics combined with git PR trailers.">
+                <option value="">-- Choose Signal --</option>
+                <option value="http_header">Gateway x-factory-* HTTP Headers</option>
+                <option value="otel_git">OTLP Export (CLAUDE_CODE_ENABLE_TELEMETRY) + Git PR</option>
+              </select>
+            </label>
+          </div>
+          <div class="scenario-feedback"></div>
+        </div>
+
+        <div class="scenario-row" data-scenario data-ok-note="Headless CI agents must run on Path 1 with strict Virtual Key budgets and x-factory-* headers so runaway loops cannot drain API spend.">
+          <div class="scenario-title">Scenario C: Unattended CI <code>Reviewer</code> agent running on every opened Pull Request</div>
+          <div class="scenario-desc">Headless GitHub Actions job evaluates PR diffs for Standards + Spec compliance via commercial LLM APIs.</div>
+          <div class="scenario-controls">
+            <label>Control Path
+              <select data-expected="path1" data-hint="Headless CI jobs call metered APIs through Path 1 (Gateway Proxy).">
+                <option value="">-- Choose Path --</option>
+                <option value="path1">Path 1: Gateway Proxy</option>
+                <option value="path2">Path 2: Harness Collector Hook</option>
+              </select>
+            </label>
+            <label>Budget Mechanism
+              <select data-expected="virtual_key" data-hint="Use a scoped Service Virtual Key with strict max_budget &amp; TPM limits.">
+                <option value="">-- Choose Budget --</option>
+                <option value="virtual_key">Gateway Virtual Key max_budget</option>
+                <option value="seat">Vendor Seat Quota + Shadow Cost Estimate</option>
+                <option value="hardware">Local GPU Compute Cap</option>
+              </select>
+            </label>
+            <label>Attribution Source
+              <select data-expected="http_header" data-hint="CI jobs can pass exact x-factory-role and x-factory-pr headers directly to the gateway.">
+                <option value="">-- Choose Signal --</option>
+                <option value="http_header">Gateway x-factory-* HTTP Headers</option>
+                <option value="git_transcript">Transcript Parser + Git Branch / PR Trailer</option>
+              </select>
+            </label>
+          </div>
+          <div class="scenario-feedback"></div>
+        </div>
+
+        <div class="scenario-row" data-scenario data-ok-note="Routing local Ollama/vLLM behind Path 1 gives your skills one uniform endpoint, RPM protection on local hardware, and unified telemetry.">
+          <div class="scenario-title">Scenario D: Local Ollama (<code>qwen2.5-coder</code>) running commit summaries &amp; triage classification</div>
+          <div class="scenario-desc">Free local inference running on developer workstation or internal GPU node for low-risk utility steps.</div>
+          <div class="scenario-controls">
+            <label>Control Path
+              <select data-expected="path1" data-hint="Route Ollama through Path 1 (Gateway Proxy) as an OpenAI-compatible backend so skills stay model-agnostic.">
+                <option value="">-- Choose Path --</option>
+                <option value="path1">Path 1: Gateway Proxy</option>
+                <option value="path2">Path 2: Harness Collector Hook</option>
+              </select>
+            </label>
+            <label>Budget Mechanism
+              <select data-expected="hardware" data-hint="Local models cost $0 in API fees; govern concurrency/RPM to protect GPU memory and latency.">
+                <option value="">-- Choose Budget --</option>
+                <option value="virtual_key">Gateway Virtual Key max_budget</option>
+                <option value="seat">Vendor Seat Quota + Shadow Cost Estimate</option>
+                <option value="hardware">Local GPU Compute Cap (RPM / Concurrency)</option>
+              </select>
+            </label>
+            <label>Attribution Source
+              <select data-expected="http_header" data-hint="Because Ollama sits behind the gateway alias, x-factory-* headers work identically to cloud APIs.">
+                <option value="">-- Choose Signal --</option>
+                <option value="http_header">Gateway x-factory-* HTTP Headers</option>
+                <option value="git_transcript">Transcript Parser + Git Branch / PR Trailer</option>
+              </select>
+            </label>
+          </div>
+          <div class="scenario-feedback"></div>
+        </div>
+      </section>
+
+      <div class="prose">
+        <h2>4. Retrieval Practice: Lock In the Concepts</h2>
+        <p>
+          Test your recall from memory before checking <a href="../reference/0001-six-plane-factory-blueprint.html">Reference 0001</a>.
+        </p>
+      </div>
+
+      <section class="interactive-panel prose-wide" data-quiz>
+        <div class="interactive-header">
+          <h3>Concept Check (3 Questions)</h3>
+          <div>
+            <span class="badge-score" data-quiz-score>Score: 0 / 3 (0 answered)</span>
+            <button class="btn" type="button" data-quiz-reset>Reset Quiz</button>
+          </div>
+        </div>
+
+        <div class="quiz-question" data-question>
+          <div class="quiz-prompt">1. Why does routing only API keys through LiteLLM fail to deliver complete usage observability for a team using Google Antigravity or Claude Code Pro/Max?</div>
+          <div class="quiz-options">
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="Local models speak standard HTTP/OpenAI-compatible protocols and proxy cleanly behind LiteLLM.">Local models refuse proxy connections unless hardware acceleration uses proprietary vendor drivers.</button>
+            <button class="quiz-option" type="button" data-correct="true" data-rationale="Subscription seats authenticate via OAuth directly with the vendor, so you need Path 2 Collector hooks (OTel / transcripts) to observe them.">Flat-rate subscription harnesses authenticate via OAuth directly and bypass metered gateway keys.</button>
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="Git worktrees isolate filesystem branches on disk and have no effect on HTTP headers sent to an AI gateway.">Gateway proxies drop HTTP headers whenever git worktrees isolate parallel developer branches.</button>
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="Claude Code explicitly supports OTLP export on subscription seats via CLAUDE_CODE_ENABLE_TELEMETRY=1.">Subscription seats automatically disable OpenTelemetry export and scrub local session transcript files.</button>
+          </div>
+          <div class="quiz-rationale"></div>
+        </div>
+
+        <div class="quiz-question" data-question>
+          <div class="quiz-prompt">2. Why should an enterprise AI Gateway enforce per-user rolling USD credit caps (<code>max_budget</code>) instead of raw token counts alone?</div>
+          <div class="quiz-options">
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="LiteLLM and OpenTelemetry explicitly track cached vs. uncached input tokens separately in Postgres.">Raw token counters cannot distinguish cached input prompts from uncached responses in Postgres.</button>
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="OpenTelemetry GenAI semantic conventions are specifically built to emit token counts across both cloud and local models.">OpenTelemetry rules strictly forbid emitting raw token counts from local inference model servers.</button>
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="Inference speed affects latency, not the unit-economics distortion caused by mixing cheap local models and expensive frontier models.">Local Ollama models emit tokens per second slower than commercial cloud reasoning endpoints.</button>
+            <button class="quiz-option" type="button" data-correct="true" data-rationale="A credit/USD cap lets engineers freely use $0 local models or cheap Flash models while reserving high-cost frontier reasoning for complex architecture.">Equal token volumes create vastly different costs across local, lightweight, and frontier models.</button>
+          </div>
+          <div class="quiz-rationale"></div>
+        </div>
+
+        <div class="quiz-question" data-question>
+          <div class="quiz-prompt">3. In an agnostic factory linking <code>chill-hq</code> Coordinator roles to an observability pipeline, how do you trace AI spend to a specific Pull Request without vendor lock-in?</div>
+          <div class="quiz-options">
+            <button class="quiz-option" type="button" data-correct="true" data-rationale="Standardized attribution tags (repo, branch, issue, role) emitted into a canonical schema join gateway logs and harness collectors with GitHub PR events.">Attach standardized repo, branch, issue, and role metadata tags to every event.</button>
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="Mandating a single proprietary IDE defeats harness agnosticism and leaves CI workers or CLI agents untracked.">Require every engineer to run one proprietary IDE plugin across all repositories.</button>
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="CI webhooks only see git commits and PR payloads, not the system prompts or token counts exchanged during local coding.">Parse raw model system prompts inside CI webhooks after merging every feature.</button>
+            <button class="quiz-option" type="button" data-correct="false" data-rationale="Storing raw unredacted prompts in git history leaks secrets and bloats repos; only lightweight attribution trailers belong in git.">Save unredacted prompt logs inside git trailers on protected main release branches.</button>
+          </div>
+          <div class="quiz-rationale"></div>
+        </div>
+      </section>
+
+      <div class="prose">
+        <h2>5. Follow-Up Questions &amp; Primary Sources</h2>
+        <p>
+          Notes below are saved locally in your browser and automatically included in both the clipboard handback and GitHub Issue link.
+        </p>
+        <textarea class="notes-area" data-handback-notes placeholder="Ask a follow-up question for your teacher (e.g., How do we estimate shadow cost on subscription seats?)"></textarea>
+
+        <p style="margin-top: 1.25rem;">
+          Recommended primary sources from <a href="../RESOURCES.md">RESOURCES.md</a>:
+        </p>
+        <ul>
+          <li><strong>Gateway &amp; Virtual Keys:</strong> <a href="https://docs.litellm.ai/docs/proxy/virtual_keys">LiteLLM Proxy Virtual Keys Docs</a></li>
+          <li><strong>Subscription OTel Telemetry:</strong> <a href="https://claude-code.mintlify.site">Claude Code Monitoring &amp; OpenTelemetry</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <aside class="drawer" id="refDrawer" aria-label="Reference 0001 Drawer">
+    <div class="drawer-header">
+      <strong style="color: var(--accent-ink);">Reference 0001 · Quick Lookup</strong>
+      <button class="btn" type="button" data-drawer-close>Close</button>
+    </div>
+    <p style="font-size: 0.86rem; color: var(--ink-muted);">Canonical telemetry schema (<code>factory_event/v1</code>) and leadership guardrail formula.</p>
+    <pre><code>{
+  "schema_version": "factory_event/v1",
+  "harness": "antigravity | claude-code | ci",
+  "billing_mode": "subscription | api_metered | local_free",
+  "factory_role": "planner | engineering | reviewer",
+  "repo": "GCherry/chill-hq",
+  "pr_number": 19,
+  "usage": {
+    "input_tokens": 42000,
+    "cached_input_tokens": 31500,
+    "estimated_cost_usd": 0.048
+  }
+}</code></pre>
+    <p style="font-size: 0.84rem; color: var(--ink-muted);">
+      <strong>Key Metric:</strong> <code>Cost per Merged PR = sum(estimated_cost_usd) / count(merged_prs)</code>
+    </p>
+    <p style="margin-top: 1rem;">
+      <a class="btn" href="../reference/0001-six-plane-factory-blueprint.html">Open Full Reference Sheet</a>
+    </p>
+  </aside>
+
+  <div class="handback-bar">
+    <div class="handback-inner">
+      <div class="handback-status">
+        <strong>Teach Handback:</strong> <span data-handback-summary>Complete exercises above to build your handback.</span>
+      </div>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-primary" type="button" data-copy-handback>Copy /teach Handback</button>
+        <a class="btn" href="https://github.com/GCherry/teach/issues/new" target="_blank" rel="noopener" data-issue-handback>Log via GitHub Issue ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
