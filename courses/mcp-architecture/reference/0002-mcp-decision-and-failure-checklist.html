@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teach · Reference 0002: MCP Decision Scorecard &amp; Failure Checklist</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    (function () {
+      var m = new URLSearchParams(window.location.search).get("mode") || localStorage.getItem("teach_theme") || "dark";
+      document.documentElement.setAttribute("data-theme", m === "light" ? "light" : "dark");
+    })();
+  </script>
+</head>
+<body class="no-handback" data-lesson-id="mcp-architecture/reference-0002">
+  <nav class="site-nav">
+    <div class="site-nav-inner">
+      <a class="site-brand" href="../lessons/0002-the-hidden-costs-of-mcp.html">
+        <span class="brand-mark">T</span>
+        <span class="brand-text">
+          <strong>Teach</strong>
+          <span class="brand-sub">MCP Architecture · <span data-mode-badge>Dark Mode</span></span>
+        </span>
+      </a>
+      <div class="site-links">
+        <a class="nav-link" href="../lessons/0001-why-mcp-is-not-just-an-api.html">Lesson 0001</a>
+        <a class="nav-link" href="../lessons/0002-the-hidden-costs-of-mcp.html">Lesson 0002</a>
+        <a class="nav-link" href="./0001-mcp-vs-api-vs-cli-matrix.html">Ref 0001</a>
+        <a class="nav-link active" href="./0002-mcp-decision-and-failure-checklist.html">Ref 0002</a>
+        <a class="nav-link" href="../MISSION.md">Mission</a>
+        <a class="nav-link" href="../RESOURCES.md">Resources</a>
+        <button class="btn" type="button" data-theme-toggle>Light Mode</button>
+        <button class="btn btn-primary no-print" type="button" onclick="window.print()">Print Sheet</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wide prose-wide">
+    <p class="kicker">Reference 0002 · Printable Decision Scorecard &amp; Hardening Checklist</p>
+    <h1>Should I Build an MCP Server? Decision &amp; Failure Checklist</h1>
+    <p class="lead">
+      Quick pre-build filter to avoid wrapping REST APIs or CLIs in unnecessary MCP ceremony—plus hardening rules proven in
+      <code>ytmix/internal/mcp/</code>. Pair with <a href="../lessons/0002-the-hidden-costs-of-mcp.html">Lesson 0002: The Hidden Costs of MCP</a>.
+    </p>
+
+    <h2>1. Five-Gate Decision Scorecard</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Gate Question</th>
+            <th>Prefer HTTP REST / gRPC</th>
+            <th>Prefer CLI (<code>--json</code>)</th>
+            <th>Prefer MCP Server</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Who is the caller?</strong></td>
+            <td>Deterministic app, web frontend (<code>ytmix ui</code>), or cron job.</td>
+            <td>Human dev or coding agent with bash access.</td>
+            <td>Multiple non-shell AI Hosts (desktop chat, IDE sidebars).</td>
+          </tr>
+          <tr>
+            <td><strong>2. Discovery model?</strong></td>
+            <td>Static build-time contract / OpenAPI SDK.</td>
+            <td>On-demand <code>--help</code> only when invoked.</td>
+            <td>Runtime <code>initialize</code> + <code>tools/list</code> across unrelated Hosts.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Surface size?</strong></td>
+            <td>Any size (dozens/hundreds of routes).</td>
+            <td>Large command trees with subcommands.</td>
+            <td>Focused (&lt;15 tools) to protect prompt context budget.</td>
+          </tr>
+          <tr>
+            <td><strong>4. Streaming &amp; binaries?</strong></td>
+            <td>Native SSE push + direct media/file HTTP streams.</td>
+            <td>Local file paths + stdout progress.</td>
+            <td>Short JSON responses; avoid giant inline blobs or high-frequency polling.</td>
+          </tr>
+          <tr>
+            <td><strong>5. Guided UX &amp; consent?</strong></td>
+            <td>Custom frontend UI handles confirmations.</td>
+            <td>TTY flags (<code>--dry-run</code>, <code>--yes</code>).</td>
+            <td>Server-authored Prompts + Host consent via <code>ToolAnnotations</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>2. MCP Cons &amp; Hardening Checklist (From <code>ytmix/internal/mcp/</code>)</h2>
+    <div class="grid-2">
+      <div class="card">
+        <span class="card-tag">Context &amp; Transport Hygiene</span>
+        <h3>Prevent Bloat &amp; Broken Pipes</h3>
+        <ul>
+          <li><strong>Cap tool count &amp; schema verbosity:</strong> Keep descriptions crisp; don't mirror 50 internal REST routes 1:1.</li>
+          <li><strong>Use Resources for reference data:</strong> Put static catalogs (<code>ytmix://presets</code>, <code>ytmix://themes</code>) behind URIs instead of extra tool calls.</li>
+          <li><strong>Stderr-only diagnostics:</strong> Never write logs or banners to stdout in stdio servers (<code>server.go</code> isolates diagnostics to <code>ErrOut</code>).</li>
+          <li><strong>Bound message sizes:</strong> Enforce a max frame byte limit (<code>16 MiB</code> in <code>server.go</code>) so malformed streams cannot OOM the Host.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="card-tag amber">Safety &amp; Async Trade-Offs</span>
+        <h3>Defend Against Non-Deterministic Callers</h3>
+        <ul>
+          <li><strong>Separate dry-run from writes:</strong> Expose read-only planning (<code>plan_mix</code>) separately from side effects (<code>start_render</code>).</li>
+          <li><strong>Validate strictly on the server:</strong> Treat <code>ToolAnnotations</code> as Host UX hints only; use <code>DisallowUnknownFields()</code> (<code>registry.go</code>).</li>
+          <li><strong>Expect indirect prompt injection:</strong> Treat external text returned in tool outputs (e.g., <code>rawId3Title</code>) as untrusted input.</li>
+          <li><strong>Watch async polling cost:</strong> Long jobs (<code>start_render</code> → <code>get_render_status</code>) burn LLM turns; keep job payloads compact.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <strong>Teach · MCP Architecture</strong> · <a href="../lessons/0002-the-hidden-costs-of-mcp.html">Back to Lesson 0002</a> · <a href="./0001-mcp-vs-api-vs-cli-matrix.html">Reference 0001</a>
+    </div>
+  </main>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
