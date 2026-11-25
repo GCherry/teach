@@ -17,8 +17,6 @@ Instructions for any coding or teaching agent working in `GCherry/teach` (Google
 
 ## Build & Verification Commands
 
-*(Wave 2 adds `bin/build-teach-site.py` and `tests/`.)*
-
 ```sh
 python bin/build-teach-site.py --out dist
 python -m unittest discover -s tests
