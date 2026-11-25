@@ -12,11 +12,11 @@ status; write **Phase Summary**; record **Verification Plan** results. When all
 phases are done, fill **Final Recap** and **Deployment Plan**, then archive this
 file per the `real-work` skill (Section 3).
 
-**Repo:** `GCherry/teach` (`D:\CodingWorkspace\teach\teach`) — read [`AGENTS.md`](../AGENTS.md) before building or testing. (Reference example repo: `GCherry/ytmix` at `D:\CodingWorkspace\ytmix\ytmix`, public on GitHub.)
+**Repo:** `GCherry/teach` (`D:\CodingWorkspace\teach\teach`) — read [`AGENTS.md`](../../AGENTS.md) before building or testing. (Reference example repo: `GCherry/ytmix` at `D:\CodingWorkspace\ytmix\ytmix`, public on GitHub.)
 
 **Branch:** `feature/mcp-architecture-course` off `main` (`45383d2`).
 
-**Domain docs:** [`GLOSSARY.md`](../GLOSSARY.md), [`docs/agents/issue-tracker.md`](../docs/agents/issue-tracker.md), [`docs/agents/triage-labels.md`](../docs/agents/triage-labels.md), [`docs/agents/domain.md`](../docs/agents/domain.md).
+**Domain docs:** [`GLOSSARY.md`](../../GLOSSARY.md), [`docs/agents/issue-tracker.md`](../../docs/agents/issue-tracker.md), [`docs/agents/triage-labels.md`](../../docs/agents/triage-labels.md), [`docs/agents/domain.md`](../../docs/agents/domain.md).
 
 **Related skills:** `coordinator`, `real-work`, `teach`, `code-review`, `tdd`.
 
@@ -214,35 +214,40 @@ Authored Lesson 0002 and printable Reference Sheet 0002 covering MCP cons, secur
 
 ## Wave 3: Full Verification, Review, Acceptance Check & PR Release <!-- serial -->
 
-**Triggered by:** Planner — Nov 25, 2026 09:58:00 AM EST
+**Triggered by:** Release — Nov 25, 2026 10:19:00 AM EST
 
 ### Phase 3: End-to-End Verification, `Reviewer`, `Acceptance Check`, Plan Archival & PR Prep
 
-Status: Not Started <!-- Not Started | In Progress | Complete | Abandoned -->
-**Triggered by:** Planner — Nov 25, 2026 09:58:00 AM EST
+Status: Complete <!-- Not Started | In Progress | Complete | Abandoned -->
+**Triggered by:** Release — Nov 25, 2026 10:19:00 AM EST
 
-- [ ] Run `python -m unittest discover -s tests -v` and `python bin/build-teach-site.py --root . --out dist`.
-- [ ] Verify generated `dist/index.html` lists both `AI Software Factory` and the new MCP Course, and verify zero broken internal links across `dist/courses/mcp-architecture/` (HTML + rendered Markdown).
-- [ ] Run read-only `Reviewer` (`code-review` Standards + Spec) against `HEAD` SHA and resolve any blocking findings.
-- [ ] Run read-only `Planner` `Acceptance Check` grading all plan checkboxes and Issue #1 criteria.
-- [ ] Update [`GCherry/teach#1`](https://github.com/GCherry/teach/issues/1) checkboxes (`- [x]`) and fill **Final Recap** and **Deployment Plan** below.
-- [ ] Archive `plans/mcp-architecture-course.md` → `plans/archive/mcp-architecture-course.md` (updating `plans/README.md`, `plans/archive/README.md`, and relative links `../` → `../../`) in the final commit on `feature/mcp-architecture-course` before PR merge per `real-work` Section 3.
-- [ ] Run `Release` (`pre-merge`): push `feature/mcp-architecture-course`, open PR targeting `main` with `Closes #1` and `## Code Review Summary`, verify PR CI workflow runs `unittest` + `build-teach-site.py` without deploying Pages, and pause for **Human Merge Approval** (`Risk: High` PR targeting `main`).
+- [x] Run `python -m unittest discover -s tests -v` and `python bin/build-teach-site.py --root . --out dist`.
+- [x] Verify generated `dist/index.html` lists both `AI Software Factory` and the new MCP Course, and verify zero broken internal links across `dist/courses/mcp-architecture/` (HTML + rendered Markdown).
+- [x] Run read-only `Reviewer` (`code-review` Standards + Spec) against `HEAD` SHA and resolve any blocking findings.
+- [x] Run read-only `Planner` `Acceptance Check` grading all plan checkboxes and Issue #1 criteria.
+- [x] Update [`GCherry/teach#1`](https://github.com/GCherry/teach/issues/1) checkboxes (`- [x]`) and fill **Final Recap** and **Deployment Plan** below.
+- [x] Archive `plans/mcp-architecture-course.md` → `plans/archive/mcp-architecture-course.md` (updating `plans/README.md`, `plans/archive/README.md`, and relative links `../` → `../../`) in the final commit on `feature/mcp-architecture-course` before PR merge per `real-work` Section 3.
+- [x] Run `Release` (`pre-merge`): push `feature/mcp-architecture-course`, open PR targeting `main` with `Closes #1` and `## Code Review Summary`, verify PR CI workflow runs `unittest` + `build-teach-site.py` without deploying Pages, and pause for **Human Merge Approval** (`Risk: High` PR targeting `main`).
 
 #### Verification Plan
 
-- `python -m unittest discover -s tests -v` passes all tests.
-- `python bin/build-teach-site.py --root . --out dist` exits `0` and leaves raw Markdown sources unchanged (`git status` clean of unintended diffs).
-- `gh pr checks` green on `pull_request` trigger (build/test pass, Pages deploy skipped), **Merge Bar** satisfied, awaiting human merge.
+- `python -m unittest discover -s D:\CodingWorkspace\teach\teach\tests -v` → `exit code 0` (`Ran 1 test in 0.083s`, `OK`; re-verified in Acceptance Check: `Ran 1 test in 0.124s`, `OK`).
+- `python D:\CodingWorkspace\teach\teach\bin\build-teach-site.py --root D:\CodingWorkspace\teach\teach --out D:\CodingWorkspace\teach\teach\dist` → `exit code 0` (`Built Teach portal with 2 course(s)`), `112` local links in `mcp-architecture` + `index.html` checked (`0` missing), `175` total links in `dist/` checked by Acceptance Check (`0` missing).
+- `Reviewer` Round 1 (`21bff66`): Axis 2 `clean`, Axis 1 found 2 blocking items (`0001` Scenario C `<select>` order + `ytmix ui` vanilla JS wording) and 5 notes; fixed in `2a91c55`; `Reviewer` Round 2 (`2a91c55`): **`clean`** (`0` blocking, `0` carried).
+- `Planner` `Acceptance Check` (`2a91c55`): all Wave 0–2 deliverables and Issue #1 file changes `met` with zero working tree mutations.
+- PR CI check (`pull_request` trigger on `main`) watched and verified green in `Release` (`pre-merge`) before pausing for human merge.
 
 #### Phase Summary
 
-_(write when phase completes)_
+Verified build, tests, link integrity, and quiz parity; passed `Reviewer` Round 2 (`clean`) and `Planner` `Acceptance Check`; ticked Issue #1 checkboxes; archived plan to `plans/archive/mcp-architecture-course.md`; opened PR targeting `main` with `Closes #1` and `## Code Review Summary` for human merge approval.
 
 ## Final Recap
 
-_(write when all phases complete)_
+- **New `/teach` Course (`courses/mcp-architecture/`):** Added `MISSION.md`, `RESOURCES.md` (14 HTTP-200 verified primary sources + 2 communities), `NOTES.md`, `learning-records/0001-api-and-ytmix-baseline.md`, `assets/{style.css,quiz.js}` (`1A Atelier` Dark/Light + `/teach session-handback`), `lessons/0001-why-mcp-is-not-just-an-api.html`, `lessons/0002-the-hidden-costs-of-mcp.html`, `reference/0001-mcp-vs-api-vs-cli-matrix.html`, and `reference/0002-mcp-decision-and-failure-checklist.html` anchored in `GCherry/ytmix` (`cmd/ytmix/`, `internal/ui/`, `internal/mcp/`).
+- **Issue [`GCherry/teach#1`](https://github.com/GCherry/teach/issues/1):** Removed stale Wave 2 wording from `AGENTS.md`, scaffolded `plans/README.md` + `plans/archive/README.md`, and updated `.github/workflows/deploy-pages.yml` to run `unittest` + `build-teach-site.py` on `pull_request` targeting `main` with isolated `pr-<number>` concurrency and Pages deploy skipped on PR events.
 
 ## Deployment Plan
 
-_(write when all phases complete)_
+1. **Human Merge Approval (`Risk: High`):** Review and merge the PR on `GCherry/teach` (`feature/mcp-architecture-course` → `main` with `--delete-branch`).
+2. **Automated GitHub Pages Deployment:** Merging to `main` triggers `.github/workflows/deploy-pages.yml` (`push: branches: [main]`), running `unittest`, building `dist/` with both courses (`ai-software-factory` and `mcp-architecture`), and publishing to `https://gcherry.github.io/teach/` (`$0` GitHub Pages).
+3. **Post-Merge Cleanup:** Verify live `deploy-pages` workflow succeeds on `main`, confirm Issue `#1` closes automatically via `Closes #1`, and delete the local `feature/mcp-architecture-course` branch.

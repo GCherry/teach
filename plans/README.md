@@ -8,7 +8,7 @@ When all phases of a plan are `Complete` or `Abandoned` and `Final Recap` + `Dep
 
 | Plan | Issue / PR | Branch | Purpose |
 |---|---|---|---|
-| [mcp-architecture-course.md](mcp-architecture-course.md) | [#1](https://github.com/GCherry/teach/issues/1) | `feature/mcp-architecture-course` | Author the `courses/mcp-architecture/` `/teach` Course (2 Lessons + 2 printable Reference Sheets anchored in `ytmix`) and resolve Issue #1 (`AGENTS.md`, `plans/` scaffolding, PR CI build checks). |
+| _(none — all current plans completed and archived)_ | — | — | — |
 
 ## Completed & Archived Plans
 

@@ -4,4 +4,4 @@ Completed and abandoned `real-work` execution plans moved from [`../README.md`](
 
 | Plan | Issue / PR | Completed | Summary |
 |---|---|---|---|
-| _(none yet — initial repo provisioning plan was archived in `chill-hq/plans/archive/teach-github-pages.md`)_ | — | — | — |
+| [mcp-architecture-course.md](mcp-architecture-course.md) | [#1](https://github.com/GCherry/teach/issues/1) | Nov 25, 2026 | Authored `courses/mcp-architecture/` (2 Lessons + 2 printable Reference Sheets anchored in `GCherry/ytmix`) and closed Issue #1 (`AGENTS.md`, `plans/` scaffolding, and `.github/workflows/deploy-pages.yml` PR build checks). |
