@@ -9,7 +9,7 @@ Instructions for any coding or teaching agent working in `GCherry/teach` (Google
 | Path | Purpose |
 |---|---|
 | `courses/<topic>/` | Self-contained `/teach` workspace (`MISSION.md`, `RESOURCES.md`, `NOTES.md`, `learning-records/*.md`, `lessons/*.html`, `reference/*.html`, `assets/*`). |
-| `bin/` | Build and validation scripts (e.g., `bin/build-teach-site.py`, added in Wave 2). |
+| `bin/` | Build and validation scripts (e.g., `bin/build-teach-site.py`). |
 | `tests/` | Automated `unittest` suite verifying static site generation without mutating raw markdown sources. |
 | `docs/agents/` | Agent-facing configuration (`issue-tracker.md`, `triage-labels.md`, `domain.md`). |
 | `GLOSSARY.md` | Canonical domain vocabulary for `Teach`. |

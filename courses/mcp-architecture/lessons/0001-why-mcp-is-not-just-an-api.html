@@ -90,7 +90,7 @@
         </p>
         <ul>
           <li><strong><code>ytmix</code> CLI:</strong> Written for a human shell (or a bash-capable agent). Discovery happens via <code>--help</code>; input is positional flags; output is human stdout text plus exit codes.</li>
-          <li><strong><code>ytmix ui</code> (HTTP REST + SSE):</strong> Written for its own bundled browser SPA. Endpoints like <code>POST /api/probe</code>, <code>POST /api/estimate</code>, and <code>GET /api/render/{id}/events</code> have no runtime capability handshake for strangers—the React/JS frontend already hardcoded every route and payload shape at compile time.</li>
+          <li><strong><code>ytmix ui</code> (HTTP REST + SSE):</strong> Written for its own bundled browser SPA. Endpoints like <code>POST /api/probe</code>, <code>POST /api/estimate</code>, and <code>GET /api/render/{id}/events</code> have no runtime capability handshake for strangers—the embedded vanilla JS frontend already hardcoded every route and payload shape at compile time.</li>
           <li><strong><code>ytmix mcp</code> (JSON-RPC 2.0 stdio):</strong> Written for <em>any</em> compliant MCP Host (IDE, desktop client, agent harness). Before calling anything, the Host negotiates protocol version and discovers Tools, Resources, and Prompts dynamically at runtime.</li>
         </ul>
       </div>
@@ -299,8 +299,8 @@
             </label>
             <label>Control Owner
               <select data-expected="model" data-hint="MCP Tools are Model-controlled (with Host consent gates).">
-                <option value="model">Model-controlled</option>
                 <option value="">-- Choose Owner --</option>
+                <option value="model">Model-controlled</option>
                 <option value="host">Host / App-controlled</option>
                 <option value="user">User-controlled</option>
               </select>
